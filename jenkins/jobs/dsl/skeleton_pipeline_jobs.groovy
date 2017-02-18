@@ -79,7 +79,7 @@ buildAppJob.with{
     }
   }
   steps {
-    shell('''## YOUR BUILD STEPS GO HERE'''.stripMargin())
+    shell('''./gradlew app:assembleDebug'''.stripMargin())
   }
   publishers{
     downstreamParameterized{
