@@ -4,9 +4,9 @@ def projectFolderName = "${PROJECT_NAME}"
 
 // Variables
 // **The git repo variables will be changed to the users' git repositories manually in the Jenkins jobs**
-def skeletonAppgitRepo = "YOUR_APPLICATION_REPO"
+def skeletonAppgitRepo = "android-app"
 def skeletonAppGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + skeletonAppgitRepo
-def regressionTestGitRepo = "YOUR_REGRESSION_TEST_REPO"
+def regressionTestGitRepo = "AndroidAppTest"
 def regressionTestGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + regressionTestGitRepo
 
 // ** The logrotator variables should be changed to meet your build archive requirements
@@ -16,19 +16,19 @@ def logRotatorArtifactsNumDaysToKeep = 7
 def logRotatorArtifactsNumToKeep = 7
 
 // Jobs
-def buildAppJob = freeStyleJob(projectFolderName + "/Skeleton_Application_Build")
-def unitTestJob = freeStyleJob(projectFolderName + "/Skeleton_Application_Unit_Tests")
-def codeAnalysisJob = freeStyleJob(projectFolderName + "/Skeleton_Application_Code_Analysis")
-def deployJob = freeStyleJob(projectFolderName + "/Skeleton_Application_Deploy")
-def regressionTestJob = freeStyleJob(projectFolderName + "/Skeleton_Application_Regression_Tests")
+def buildAppJob = freeStyleJob(projectFolderName + "/Android_Application_Build")
+def unitTestJob = freeStyleJob(projectFolderName + "/Android_Application_Unit_Tests")
+def codeAnalysisJob = freeStyleJob(projectFolderName + "/Android_Application_Code_Analysis")
+def deployJob = freeStyleJob(projectFolderName + "/Android_Application_Deploy")
+def regressionTestJob = freeStyleJob(projectFolderName + "/Android_Application_Regression_Tests")
 
 // Views
-def pipelineView = buildPipelineView(projectFolderName + "/Skeleton_Application")
+def pipelineView = buildPipelineView(projectFolderName + "/Android_Application")
 
 pipelineView.with{
-    title('Skeleton Application Pipeline')
+    title('Android Application Pipeline')
     displayedBuilds(5)
-    selectedJob(projectFolderName + "/Skeleton_Application_Build")
+    selectedJob(projectFolderName + "/Android_Application_Build")
     showPipelineParameters()
     showPipelineDefinitionHeader()
     refreshFrequency(5)
@@ -40,7 +40,7 @@ pipelineView.with{
 // New jobs can be introduced into the pipeline as required
 
 buildAppJob.with{
-  description("Skeleton application build job.")
+  description("Android application build job.")
   logRotator {
     daysToKeep(logRotatorDaysToKeep)
     numToKeep(logRotatorBuildNumToKeep)
@@ -83,7 +83,7 @@ buildAppJob.with{
   }
   publishers{
     downstreamParameterized{
-      trigger(projectFolderName + "/Skeleton_Application_Unit_Tests"){
+      trigger(projectFolderName + "/Android_Application_Unit_Tests"){
         condition("UNSTABLE_OR_BETTER")
         parameters{
           predefinedProp("B",'${BUILD_NUMBER}')
@@ -98,7 +98,7 @@ unitTestJob.with{
   description("This job runs unit tests on our skeleton application.")
   parameters{
     stringParam("B",'',"Parent build number")
-    stringParam("PARENT_BUILD","Skeleton_Application_Build","Parent build name")
+    stringParam("PARENT_BUILD","Android_Application_Build","Parent build name")
   }
   logRotator {
     daysToKeep(logRotatorDaysToKeep)
@@ -124,7 +124,7 @@ unitTestJob.with{
   }
   publishers{
     downstreamParameterized{
-      trigger(projectFolderName + "/Skeleton_Application_Code_Analysis"){
+      trigger(projectFolderName + "/Android_Application_Code_Analysis"){
         condition("UNSTABLE_OR_BETTER")
         parameters{
           predefinedProp("B",'${B}')
@@ -139,7 +139,7 @@ codeAnalysisJob.with{
   description("This job runs code quality analysis for our skeleton application using SonarQube.")
   parameters{
     stringParam("B",'',"Parent build number")
-    stringParam("PARENT_BUILD","Skeleton_Application_Build","Parent build name")
+    stringParam("PARENT_BUILD","Android_Application_Build","Parent build name")
   }
   logRotator {
     daysToKeep(logRotatorDaysToKeep)
@@ -163,7 +163,7 @@ codeAnalysisJob.with{
   }
   publishers{
     downstreamParameterized{
-      trigger(projectFolderName + "/Skeleton_Application_Deploy"){
+      trigger(projectFolderName + "/Android_Application_Deploy"){
         condition("UNSTABLE_OR_BETTER")
         parameters{
           predefinedProp("B",'${B}')
@@ -178,7 +178,7 @@ deployJob.with{
   description("This job deploys the skeleton application to the CI environment")
   parameters{
     stringParam("B",'',"Parent build number")
-    stringParam("PARENT_BUILD","Skeleton_Application_Build","Parent build name")
+    stringParam("PARENT_BUILD","Android_Application_Build","Parent build name")
     stringParam("ENVIRONMENT_NAME","CI","Name of the environment.")
   }
   logRotator {
@@ -203,7 +203,7 @@ deployJob.with{
   }
   publishers{
     downstreamParameterized{
-      trigger(projectFolderName + "/Skeleton_Application_Regression_Tests"){
+      trigger(projectFolderName + "/Android_Application_Regression_Tests"){
         condition("UNSTABLE_OR_BETTER")
         parameters{
           predefinedProp("B",'${B}')
@@ -219,7 +219,7 @@ regressionTestJob.with{
   description("This job runs regression tests on the deployed skeleton application")
   parameters{
     stringParam("B",'',"Parent build number")
-    stringParam("PARENT_BUILD","Skeleton_Application_Build","Parent build name")
+    stringParam("PARENT_BUILD","Android_Application_Build","Parent build name")
     stringParam("ENVIRONMENT_NAME","CI","Name of the environment.")
   }
   logRotator {
