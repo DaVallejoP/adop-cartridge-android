@@ -6,7 +6,7 @@ def projectFolderName = "${PROJECT_NAME}"
 // **The git repo variables will be changed to the users' git repositories manually in the Jenkins jobs**
 def skeletonAppgitRepo = "android-app"
 def skeletonAppGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + skeletonAppgitRepo
-def regressionTestGitRepo = "AndroidAppTest"
+def regressionTestGitRepo = "android-app"
 def regressionTestGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + regressionTestGitRepo
 
 // ** The logrotator variables should be changed to meet your build archive requirements
@@ -60,7 +60,7 @@ buildAppJob.with{
       env('WORKSPACE_NAME',workspaceFolderName)
       env('PROJECT_NAME',projectFolderName)
   }
-  label("docker")
+  label("android")
   wrappers {
     preBuildCleanup()
     injectPasswords()
@@ -116,11 +116,11 @@ unitTestJob.with{
       env('WORKSPACE_NAME',workspaceFolderName)
       env('PROJECT_NAME',projectFolderName)
   }
-  label("docker")
+  label("android")
   steps {
   }
   steps {
-    shell('''## YOUR UNIT TESTING STEPS GO HERE'''.stripMargin())
+    shell('''./gradlew app:test app:connectedAndroidTest'''.stripMargin())
   }
   publishers{
     downstreamParameterized{
@@ -157,7 +157,7 @@ codeAnalysisJob.with{
     maskPasswords()
     sshAgent("adop-jenkins-master")
   }
-  label("docker")
+  label("android")
   steps {
     shell('''## YOUR CODE ANALYSIS STEPS GO HERE'''.stripMargin())
   }
@@ -197,7 +197,7 @@ deployJob.with{
       env('WORKSPACE_NAME',workspaceFolderName)
       env('PROJECT_NAME',projectFolderName)
   }
-  label("docker")
+  label("android")
   steps {
     shell('''## YOUR DEPLOY STEPS GO HERE'''.stripMargin())
   }
@@ -247,7 +247,7 @@ regressionTestJob.with{
       env('WORKSPACE_NAME',workspaceFolderName)
       env('PROJECT_NAME',projectFolderName)
   }
-  label("docker")
+  label("android")
   steps {
     shell('''## YOUR REGRESSION TESTING STEPS GO HERE'''.stripMargin())
   }
