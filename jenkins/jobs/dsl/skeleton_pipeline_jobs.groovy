@@ -170,7 +170,7 @@ codeAnalysisJob.with{
   }
   label("android")
   steps {
-      copyArtifacts('Reference_Application_Unit_Tests') {
+      copyArtifacts('Android_Application_Unit_Tests') {
           buildSelector {
               buildNumber('${B}')
           }
