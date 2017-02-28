@@ -79,10 +79,11 @@ buildAppJob.with{
     }
   }
   steps {
-    shell('''./gradlew app:assembleDebug'''.stripMargin())
+    shell('''./gradlew app:assembleMockDebug'''.stripMargin())
   }
   publishers{
     downstreamParameterized{
+      archiveArtifacts("**/*")
       trigger(projectFolderName + "/Android_Application_Unit_Tests"){
         condition("UNSTABLE_OR_BETTER")
         parameters{
@@ -118,11 +119,21 @@ unitTestJob.with{
   }
   label("android")
   steps {
+          copyArtifacts("Android_Application_Build") {
+              buildSelector {
+                  buildNumber('${B}')
+              }
+          }
+          maven {
+              goals('clean test')
+              mavenInstallation("ADOP Maven")
+          }
   }
   steps {
-    shell('''./gradlew app:test app:connectedAndroidTest'''.stripMargin())
+    shell('''./gradlew app:testMockDebugUnitTest '''.stripMargin())
   }
   publishers{
+    archiveArtifacts("**/*")
     downstreamParameterized{
       trigger(projectFolderName + "/Android_Application_Code_Analysis"){
         condition("UNSTABLE_OR_BETTER")
@@ -159,7 +170,14 @@ codeAnalysisJob.with{
   }
   label("android")
   steps {
-    shell('''## YOUR CODE ANALYSIS STEPS GO HERE'''.stripMargin())
+      copyArtifacts('Reference_Application_Unit_Tests') {
+          buildSelector {
+              buildNumber('${B}')
+          }
+      }
+  }
+  steps {
+    shell('''./gradlew app:lintMockDebug'''.stripMargin())
   }
   publishers{
     downstreamParameterized{
@@ -248,7 +266,14 @@ regressionTestJob.with{
       env('PROJECT_NAME',projectFolderName)
   }
   label("android")
+  
   steps {
-    shell('''## YOUR REGRESSION TESTING STEPS GO HERE'''.stripMargin())
+    shell('''adb connect 192.168.99.100:5555
+adb shell input keyevent 82 && adb shell input keyevent 66
+adb shell settings put global window_animation_scale 0
+adb shell settings put global transition_animation_scale 0
+adb shell settings put global animator_duration_scale 0
+./gradlew app:connectedMockDebugAndroidTest
+'''.stripMargin())
   }
 }
