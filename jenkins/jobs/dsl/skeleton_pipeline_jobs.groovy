@@ -119,15 +119,11 @@ unitTestJob.with{
   }
   label("android")
   steps {
-          copyArtifacts("Android_Application_Build") {
-              buildSelector {
-                  buildNumber('${B}')
-              }
-          }
-          maven {
-              goals('clean test')
-              mavenInstallation("ADOP Maven")
-          }
+    copyArtifacts("Android_Application_Build") {
+        buildSelector {
+            buildNumber('${B}')
+        }
+    }
   }
   steps {
     shell('''./gradlew app:testMockDebugUnitTest '''.stripMargin())
@@ -266,7 +262,7 @@ regressionTestJob.with{
       env('PROJECT_NAME',projectFolderName)
   }
   label("android")
-  
+
   steps {
     shell('''adb connect 192.168.99.100:5555
 adb shell input keyevent 82 && adb shell input keyevent 66
