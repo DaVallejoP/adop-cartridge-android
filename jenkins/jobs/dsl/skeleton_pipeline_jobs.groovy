@@ -5,9 +5,9 @@ def projectFolderName = "${PROJECT_NAME}"
 // Variables
 // **The git repo variables will be changed to the users' git repositories manually in the Jenkins jobs**
 def skeletonAppgitRepo = "android-app"
-def skeletonAppGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + skeletonAppgitRepo
+def skeletonAppGitUrl = "ssh://jenkins@gerrit:29418/" + skeletonAppgitRepo
 def regressionTestGitRepo = "android-app"
-def regressionTestGitUrl = "ssh://jenkins@gerrit:29418/${PROJECT_NAME}/" + regressionTestGitRepo
+def regressionTestGitUrl = "ssh://jenkins@gerrit:29418/" + regressionTestGitRepo
 
 // ** The logrotator variables should be changed to meet your build archive requirements
 def logRotatorDaysToKeep = 7
