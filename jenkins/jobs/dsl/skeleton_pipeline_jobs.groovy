@@ -126,7 +126,7 @@ unitTestJob.with{
     }
   }
   steps {
-    shell('''./gradlew app:testMockDebugUnitTest '''.stripMargin())
+    shell('''./gradlew app:jacocoTestMockDebugUnitTestReport '''.stripMargin())
   }
   publishers{
     archiveArtifacts("**/*")
