@@ -4,10 +4,10 @@ def projectFolderName = "${PROJECT_NAME}"
 
 // Variables
 // **The git repo variables will be changed to the users' git repositories manually in the Jenkins jobs**
-def skeletonAppgitRepo = "android-app"
-def skeletonAppGitUrl = "ssh://jenkins@gerrit:29418/" + skeletonAppgitRepo
-def regressionTestGitRepo = "android-app"
-def regressionTestGitUrl = "ssh://jenkins@gerrit:29418/" + regressionTestGitRepo
+def skeletonAppgitRepo = "android-app.git"
+def skeletonAppGitUrl = "https://github.com/DaVallejoP/" + skeletonAppgitRepo
+def regressionTestGitRepo = "android-app.git"
+def regressionTestGitUrl = "https://github.com/DaVallejoP/android-app.git" + regressionTestGitRepo
 
 // ** The logrotator variables should be changed to meet your build archive requirements
 def logRotatorDaysToKeep = 7
@@ -126,7 +126,7 @@ unitTestJob.with{
     }
   }
   steps {
-    shell('''./gradlew app:jacocoTestMockDebugUnitTestReport '''.stripMargin())
+    shell('''./gradlew app:jacocoTestMockDebugUnitTestReport'''.stripMargin())
   }
   publishers{
     archiveArtifacts("**/*")
@@ -176,6 +176,22 @@ codeAnalysisJob.with{
     shell('''./gradlew app:lintMockDebug'''.stripMargin())
   }
   publishers{
+    androidLint('**/lint-results.xml') {
+      healthLimits(3, 20)
+      thresholdLimit('high')
+      defaultEncoding('UTF-8')
+      canRunOnFailed(true)
+      useStableBuildAsReference(true)
+      useDeltaValues(true)
+      computeNew(true)
+      shouldDetectModules(true)
+      thresholds(
+        unstableTotal: [all: 1, high: 2, normal: 3, low: 4],
+        failedTotal: [all: 5, high: 6, normal: 7, low: 8],
+        unstableNew: [all: 9, high: 10, normal: 11, low: 12],
+        failedNew: [all: 13, high: 14, normal: 15, low: 16]
+      )
+    }
     downstreamParameterized{
       trigger(projectFolderName + "/Android_Application_Deploy"){
         condition("UNSTABLE_OR_BETTER")
@@ -264,12 +280,12 @@ regressionTestJob.with{
   label("android")
 
   steps {
-    shell('''adb connect 192.168.99.100:5555
+    shell('''adb connect happy_dijkstra:5555
 adb shell input keyevent 82 && adb shell input keyevent 66
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
-./gradlew app:connectedMockDebugAndroidTest
+./gradlew app:connectedMockDebugAndroidTest sonarqube
 '''.stripMargin())
   }
 }
