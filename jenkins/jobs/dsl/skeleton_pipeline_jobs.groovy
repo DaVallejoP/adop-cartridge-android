@@ -7,7 +7,7 @@ def projectFolderName = "${PROJECT_NAME}"
 def skeletonAppgitRepo = "android-app.git"
 def skeletonAppGitUrl = "https://github.com/DaVallejoP/" + skeletonAppgitRepo
 def regressionTestGitRepo = "android-app.git"
-def regressionTestGitUrl = "https://github.com/DaVallejoP/android-app.git" + regressionTestGitRepo
+def regressionTestGitUrl = "https://github.com/DaVallejoP/" + regressionTestGitRepo
 
 // ** The logrotator variables should be changed to meet your build archive requirements
 def logRotatorDaysToKeep = 7
@@ -280,7 +280,7 @@ regressionTestJob.with{
   label("android")
 
   steps {
-    shell('''adb connect happy_dijkstra:5555
+    shell('''adb connect android-emulator:5555
 adb shell input keyevent 82 && adb shell input keyevent 66
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
