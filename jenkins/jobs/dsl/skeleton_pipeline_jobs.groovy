@@ -4,10 +4,9 @@ def projectFolderName = "${PROJECT_NAME}"
 
 // Variables
 // **The git repo variables will be changed to the users' git repositories manually in the Jenkins jobs**
-def skeletonAppgitRepo = "android-app.git"
-def skeletonAppGitUrl = "https://github.com/DaVallejoP/" + skeletonAppgitRepo
-def regressionTestGitRepo = "android-app.git"
-def regressionTestGitUrl = "https://github.com/DaVallejoP/" + regressionTestGitRepo
+
+def skeletonAppGitUrl = "https://github.com/googlesamples/android-architecture.git"
+def regressionTestGitUrl = "https://github.com/googlesamples/android-architecture.git"
 
 // ** The logrotator variables should be changed to meet your build archive requirements
 def logRotatorDaysToKeep = 7
@@ -53,7 +52,7 @@ buildAppJob.with{
         url(skeletonAppGitUrl)
         credentials("adop-jenkins-master")
       }
-      branch("*/master")
+      branch("*/todo-mvp")
     }
   }
   environmentVariables {
@@ -79,7 +78,8 @@ buildAppJob.with{
     }
   }
   steps {
-    shell('''./gradlew app:assembleMockDebug'''.stripMargin())
+    shell('''cd todoapp
+      ./gradlew app:assembleMockDebug'''.stripMargin())
   }
   publishers{
     downstreamParameterized{
@@ -126,7 +126,8 @@ unitTestJob.with{
     }
   }
   steps {
-    shell('''./gradlew app:jacocoTestMockDebugUnitTestReport'''.stripMargin())
+    shell('''cd todoapp
+      ./gradlew app:createMockDebugCoverageReport'''.stripMargin())
   }
   publishers{
     archiveArtifacts("**/*")
@@ -173,7 +174,8 @@ codeAnalysisJob.with{
       }
   }
   steps {
-    shell('''./gradlew app:lintMockDebug'''.stripMargin())
+    shell('''cd todoapp
+      ./gradlew app:lintMockDebug'''.stripMargin())
   }
   publishers{
     androidLint('**/lint-results.xml') {
@@ -280,7 +282,8 @@ regressionTestJob.with{
   label("android")
 
   steps {
-    shell('''adb connect android-emulator:5555
+    shell('''cd todoapp
+      adb connect android-emulator:5555
 adb shell input keyevent 82 && adb shell input keyevent 66
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
