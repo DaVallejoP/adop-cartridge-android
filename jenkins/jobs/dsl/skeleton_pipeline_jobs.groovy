@@ -127,7 +127,7 @@ unitTestJob.with{
   }
   steps {
     shell('''cd todoapp
-      ./gradlew app:createMockDebugCoverageReport'''.stripMargin())
+      ./gradlew app:testMockDebugUnitTest'''.stripMargin())
   }
   publishers{
     archiveArtifacts("**/*")
