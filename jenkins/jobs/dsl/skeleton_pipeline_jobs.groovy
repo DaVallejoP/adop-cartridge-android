@@ -266,7 +266,7 @@ regressionTestJob.with{
         url(regressionTestGitUrl)
         credentials("adop-jenkins-master")
       }
-      branch("*/master")
+      branch("*/todo-mvp")
     }
   }
   wrappers {
